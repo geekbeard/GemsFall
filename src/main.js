@@ -156,18 +156,22 @@ function create() {
         });
     
         this.input.on('pointerdown', (pointer) => {
-            // Spawn the 'touch' effect at the pointer location
+            // Check if a gem is under the pointer
+            const gem = this.physics.overlapRect(pointer.x, pointer.y, 1, 1)[0]?.gameObject;
+        
+            if (gem && this.gems.contains(gem)) {
+                // Handle gem touch logic
+                this.score += gem.getData('value'); // Add score
+                this.scoreText.setText(`Score: ${this.score}`);
+                gem.destroy(); // Remove tapped gem
+            }
+        
+            // Spawn the touch effect at the pointer location
             const touchEffect = this.add.sprite(pointer.x, pointer.y, 'touch');
-        
-            // Scale it down by a factor of 10
-            touchEffect.setScale(0.3); // Scale to 10% of original size
-        
-            // Play the animation (if needed, define it first)
+            touchEffect.setScale(0.3); // Scale down to 10%
             if (this.anims.exists('touchEffect')) {
                 touchEffect.play('touchEffect');
             }
-        
-            // Automatically destroy the sprite after animation or delay
             this.time.delayedCall(500, () => {
                 touchEffect.destroy();
             });
