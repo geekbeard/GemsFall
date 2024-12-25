@@ -126,6 +126,12 @@ function create() {
                 );
     
                 gem.play(`gem${gemType}`); // Play the animation
+                // Adjust the physics body size (increase by 10px)
+                const extraSize = 10;
+                gem.body.setSize(16 + extraSize, 16 + extraSize); // Adjust size
+                gem.body.setOffset(-extraSize / 2, -extraSize / 2); // Center it
+
+
                 gem.setData('value', gemType * 10); // Example scoring
                 gem.setData('speed', baseSpeed + gemType * 20); // Example speed
                 gem.setVelocityY(gem.getData('speed'));
