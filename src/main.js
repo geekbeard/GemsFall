@@ -27,6 +27,10 @@ function preload() {
         frameWidth: 16,
         frameHeight: 16,
     });
+    this.load.spritesheet('touch', 'src/assets/Effect_Impact_1_291x301.png', {
+        frameWidth: 291,
+        frameHeight: 301,
+    });
 }
 
 function create() {
@@ -110,6 +114,12 @@ function create() {
             frameRate: 10,
             repeat: -1,
         });
+        this.anims.create({
+            key: 'touchEffect',
+            frames: this.anims.generateFrameNumbers('touch', { start: 0, end: 15 }), // Adjust frame range
+            frameRate: 15,
+            repeat: 0, // Play once
+        });
     
         this.gems = this.physics.add.group();
     
@@ -146,18 +156,21 @@ function create() {
         });
     
         this.input.on('pointerdown', (pointer) => {
-            const gem = this.physics.overlapRect(
-                pointer.x,
-                pointer.y,
-                1,
-                1
-            )[0]?.gameObject;
-    
-            if (gem && this.gems.contains(gem)) {
-                this.score += gem.getData('value');
-                this.scoreText.setText(`Score: ${this.score}`);
-                gem.destroy();
+            // Spawn the 'touch' effect at the pointer location
+            const touchEffect = this.add.sprite(pointer.x, pointer.y, 'touch');
+        
+            // Scale it down by a factor of 10
+            touchEffect.setScale(0.3); // Scale to 10% of original size
+        
+            // Play the animation (if needed, define it first)
+            if (this.anims.exists('touchEffect')) {
+                touchEffect.play('touchEffect');
             }
+        
+            // Automatically destroy the sprite after animation or delay
+            this.time.delayedCall(500, () => {
+                touchEffect.destroy();
+            });
         });
     }
 
